@@ -65,7 +65,7 @@ namespace ImageGallery.Client
                 ClientId = "imagegalleryclient",
                 Scope = { "openid", "profile" },
                 ResponseType = "code id_token",
-                SignInScheme = "Cookies",
+                SignInScheme = "Cookies",                
                 SaveTokens = true,
                 ClientSecret = "secret",
                 GetClaimsFromUserInfoEndpoint = true
