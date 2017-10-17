@@ -5,6 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using ImageGallery.Client.Services;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Linq;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ImageGallery.Client
 {
@@ -57,6 +63,8 @@ namespace ImageGallery.Client
                 AuthenticationScheme = "Cookies"
             });
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
             {
                 AuthenticationScheme = "oidc",
@@ -65,12 +73,36 @@ namespace ImageGallery.Client
                 ClientId = "imagegalleryclient",
                 Scope = { "openid", "profile" },
                 ResponseType = "code id_token",
-                SignInScheme = "Cookies",                
+                SignInScheme = "Cookies",
                 SaveTokens = true,
                 ClientSecret = "secret",
-                GetClaimsFromUserInfoEndpoint = true
+                GetClaimsFromUserInfoEndpoint = true,
+                Events = new OpenIdConnectEvents
+                {
+                    OnTokenValidated = tokenValidatedContext =>
+                    {
+                        var identity = tokenValidatedContext.Ticket.Principal.Identity as ClaimsIdentity;
+
+                        var subjectClaim = identity.Claims.FirstOrDefault(x => x.Type == "sub");
+                        var newClaimsIdentity = new ClaimsIdentity(tokenValidatedContext.Ticket.AuthenticationScheme, "lastname", "role");
+
+                        newClaimsIdentity.AddClaim(subjectClaim);
+
+                        tokenValidatedContext.Ticket = new AuthenticationTicket(
+                            new ClaimsPrincipal(newClaimsIdentity),
+                            tokenValidatedContext.Ticket.Properties,
+                            tokenValidatedContext.Ticket.AuthenticationScheme);
+
+
+                        return Task.FromResult(0);
+                    },
+                    OnUserInformationReceived = userInformationReceivedContext =>
+                    {
+                        return Task.FromResult(0);
+                    }
+                }
             });
-            
+
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
@@ -79,6 +111,6 @@ namespace ImageGallery.Client
                     name: "default",
                     template: "{controller=Gallery}/{action=Index}/{id?}");
             });
-        }         
+        }
     }
 }

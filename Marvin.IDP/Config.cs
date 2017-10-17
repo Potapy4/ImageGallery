@@ -22,8 +22,8 @@ namespace Marvin.IDP
                     Password = "12345",
                     Claims = new List<Claim>
                     {
-                        new Claim("lastname", "Potapenko"),
-                        new Claim("some_field", "test_value")
+                        new Claim("given_name", "Potapenko"),
+                        new Claim("family_name", "test_value")
                     }
                 },
                 new TestUser
@@ -33,8 +33,8 @@ namespace Marvin.IDP
                     Password = "password",
                     Claims = new List<Claim>
                     {
-                        new Claim("lastname", "Claire"),
-                        new Claim("some_field", "another_value")
+                        new Claim("given_name", "Claire"),
+                        new Claim("family_name", "another_value")
                     }
                 }
             };
