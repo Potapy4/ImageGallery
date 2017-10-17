@@ -22,8 +22,10 @@ namespace Marvin.IDP
                     Password = "12345",
                     Claims = new List<Claim>
                     {
-                        new Claim("lastname", "Potapenko"),
-                        new Claim("some_field", "test_value")
+                        new Claim("given_name", "Potapenko"),
+                        new Claim("family_name", "test_value"),
+                        new Claim("address", "1, Main Road"),
+                        new Claim("role", "Free")
                     }
                 },
                 new TestUser
@@ -33,8 +35,10 @@ namespace Marvin.IDP
                     Password = "password",
                     Claims = new List<Claim>
                     {
-                        new Claim("lastname", "Claire"),
-                        new Claim("some_field", "another_value")
+                        new Claim("given_name", "Claire"),
+                        new Claim("family_name", "another_value"),
+                        new Claim("address", "2, Big Street"),
+                        new Claim("role", "Premium")
                     }
                 }
             };
@@ -45,7 +49,9 @@ namespace Marvin.IDP
             return new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
+                new IdentityResources.Address(),
+                new IdentityResource("roles", "Your role(s)", new List<string> { "role" })
             };
         }
 
@@ -65,7 +71,9 @@ namespace Marvin.IDP
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Address,
+                        "roles"
                     },
                     ClientSecrets =
                     {
