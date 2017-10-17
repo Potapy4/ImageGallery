@@ -71,7 +71,7 @@ namespace ImageGallery.Client
                 Authority = "https://localhost:44325/",
                 RequireHttpsMetadata = true,
                 ClientId = "imagegalleryclient",
-                Scope = { "openid", "profile" },
+                Scope = { "openid", "profile", "address" },
                 ResponseType = "code id_token",
                 SignInScheme = "Cookies",
                 SaveTokens = true,
@@ -81,10 +81,15 @@ namespace ImageGallery.Client
                 {
                     OnTokenValidated = tokenValidatedContext =>
                     {
-                        var identity = tokenValidatedContext.Ticket.Principal.Identity as ClaimsIdentity;
+                        var identity = tokenValidatedContext.Ticket.Principal.Identity
+                            as ClaimsIdentity;
 
-                        var subjectClaim = identity.Claims.FirstOrDefault(x => x.Type == "sub");
-                        var newClaimsIdentity = new ClaimsIdentity(tokenValidatedContext.Ticket.AuthenticationScheme, "lastname", "role");
+                        var subjectClaim = identity.Claims.FirstOrDefault(z => z.Type == "sub");
+
+                        var newClaimsIdentity = new ClaimsIdentity(
+                          tokenValidatedContext.Ticket.AuthenticationScheme,
+                          "given_name",
+                          "role");
 
                         newClaimsIdentity.AddClaim(subjectClaim);
 
@@ -93,11 +98,11 @@ namespace ImageGallery.Client
                             tokenValidatedContext.Ticket.Properties,
                             tokenValidatedContext.Ticket.AuthenticationScheme);
 
-
                         return Task.FromResult(0);
                     },
                     OnUserInformationReceived = userInformationReceivedContext =>
                     {
+                        userInformationReceivedContext.User.Remove("address");
                         return Task.FromResult(0);
                     }
                 }
