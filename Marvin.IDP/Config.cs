@@ -24,7 +24,8 @@ namespace Marvin.IDP
                     {
                         new Claim("given_name", "Potapenko"),
                         new Claim("family_name", "test_value"),
-                        new Claim("address", "1, Main Road")
+                        new Claim("address", "1, Main Road"),
+                        new Claim("role", "Free")
                     }
                 },
                 new TestUser
@@ -36,7 +37,8 @@ namespace Marvin.IDP
                     {
                         new Claim("given_name", "Claire"),
                         new Claim("family_name", "another_value"),
-                        new Claim("address", "2, Big Street")
+                        new Claim("address", "2, Big Street"),
+                        new Claim("role", "Premium")
                     }
                 }
             };
@@ -48,7 +50,8 @@ namespace Marvin.IDP
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Address()
+                new IdentityResources.Address(),
+                new IdentityResource("roles", "Your role(s)", new List<string> { "role" })
             };
         }
 
@@ -69,7 +72,8 @@ namespace Marvin.IDP
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Address
+                        IdentityServerConstants.StandardScopes.Address,
+                        "roles"
                     },
                     ClientSecrets =
                     {
